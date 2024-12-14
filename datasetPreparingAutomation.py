@@ -132,28 +132,63 @@ def check(username):
 
 
 
-    elements = driver.find_elements(By.CLASS_NAME, 'css-146c3p1.r-8akbws.r-krxsd3.r-dnmrzs.r-1udh08x.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-bnwqim')
 
-    for element in elements:
-        print(element.text)
+    #elements = driver.find_elements(By.CLASS_NAME, 'css-146c3p1.r-8akbws.r-krxsd3.r-dnmrzs.r-1udh08x.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-bnwqim')
 
+    max_scrolls = 2  # Maksimum kaydırma denemesi
+    scroll_count = 0
+    elementss = driver.find_elements(By.CLASS_NAME, 'css-175oi2r.r-18u37iz.r-1udh08x.r-1c4vpko.r-1c7gwzm.r-o7ynqc.r-6416eg.r-1ny4l3l.r-1loqt21')
+    while len(elementss) < 4 and scroll_count < max_scrolls:
+        # Sayfayı aşağı kaydır
+        driver.execute_script("window.scrollBy(0, 1000);")  # 1000 piksel aşağı kaydır
+        time.sleep(1)  # Sayfanın yüklenmesi için bekleme süresi
 
+        # Elemanları tekrar kontrol et
+        elementss = driver.find_elements(By.CLASS_NAME, 'css-175oi2r.r-18u37iz.r-1udh08x.r-1c4vpko.r-1c7gwzm.r-o7ynqc.r-6416eg.r-1ny4l3l.r-1loqt21')
+        scroll_count += 1
 
+    filtered_elements = [element for element in elementss if "reposted" not in element.text.lower()]
+
+    tweet_texts=str()
+    # Filtrelenmiş elemanların her birinden yeni elemanları bulma
+    for element in filtered_elements:
+        
+        sub_elements = element.find_elements(By.CLASS_NAME, 'css-146c3p1.r-8akbws.r-krxsd3.r-dnmrzs.r-1udh08x.r-bcqeeo.r-1ttztb7.r-qvutc0.r-37j5jr.r-a023e6.r-rjixqe.r-16dba41.r-bnwqim')
+        for sub_element in sub_elements:
+            #print(sub_element.text)  # Alt elemanın metnini yazdır
+            if not tweet_texts:
+                tweet_texts=sub_element.text
+            else:
+                tweet_texts=tweet_texts+","+sub_element.text
+
+    print(tweet_texts)
+    dates = driver.find_elements(By.CLASS_NAME, 'css-175oi2r.r-18u37iz.r-1q142lx')
+    scroll_countt=0
+    max_scrollss=2
+    while len(dates) < 4 and scroll_countt < max_scrollss:
+        driver.execute_script("window.scrollBy(0, 1000);")  # 1000 piksel aşağı kaydır
+        time.sleep(1)
+
+        dates = driver.find_elements(By.CLASS_NAME, 'css-175oi2r.r-18u37iz.r-1q142lx')
+        scroll_countt+=1
+    post_dates=str()
+    for date in dates:
+        #print(date.text)
+        if not post_dates:
+            post_dates=date.text
+        else:
+            post_dates=post_dates+","+date.text
+
+    print(post_dates)
 
     file_path = "output.xlsx"  # Kaydedilecek dosya yolu
-    headers = ["Username", "Followers", "Following", "Posts", "Join Year"]
-    values = [username, follower, following, postnumber, join_year]
+    headers = ["Username", "Followers", "Following", "PostNumber", "Join Year", "post_dates","tweet_texts"]
+    values = [username, follower, following, postnumber, join_year,post_dates,tweet_texts]
 
     # update_excel(file_path, headers, values)
 
     
 
-    
-        
-        
-       
-
-    
 
 # Excel işlemlerini gerçekleştirme
 def update_excel(file_path, headers, values):
