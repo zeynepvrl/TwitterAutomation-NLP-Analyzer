@@ -161,7 +161,7 @@ def check(username):
             else:
                 tweet_texts=tweet_texts+","+sub_element.text
 
-    print(tweet_texts)
+    #print(tweet_texts)
     dates = driver.find_elements(By.CLASS_NAME, 'css-175oi2r.r-18u37iz.r-1q142lx')
     scroll_countt=0
     max_scrollss=2
@@ -172,24 +172,28 @@ def check(username):
         dates = driver.find_elements(By.CLASS_NAME, 'css-175oi2r.r-18u37iz.r-1q142lx')
         scroll_countt+=1
     post_dates=str()
+    counter=0
     for date in dates:
         #print(date.text)
+        if counter >=4:
+            break
         if not post_dates:
             post_dates=date.text
         else:
             post_dates=post_dates+","+date.text
+        counter+=1
 
-    print(post_dates)
+    #print(post_dates)
+
+    target= input(f"{username} için etiketi girin: ")  # Terminalden etiket girilir
 
     file_path = "output.xlsx"  # Kaydedilecek dosya yolu
-    headers = ["Username", "Followers", "Following", "PostNumber", "Join Year", "post_dates","tweet_texts"]
-    values = [username, follower, following, postnumber, join_year,post_dates,tweet_texts]
+    headers = ["Username", "Followers", "Following", "PostNumber", "Join Year", "post_dates","tweet_texts","target"]
+    values = [username, follower, following, postnumber, join_year,post_dates,tweet_texts,target]
 
-    # update_excel(file_path, headers, values)
+    update_excel(file_path, headers, values)
 
     
-
-
 # Excel işlemlerini gerçekleştirme
 def update_excel(file_path, headers, values):
     # Eğer dosya yoksa yeni bir dosya oluştur
